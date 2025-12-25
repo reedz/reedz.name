@@ -11,11 +11,11 @@ This is a simple, clean blog focused on software engineering topics.
 To run this site locally:
 
 ```bash
-# Install Jekyll and dependencies
-gem install bundler jekyll
+# Install dependencies
+bundle install
 
 # Serve the site
-jekyll serve
+bundle exec jekyll serve
 ```
 
 Then visit `http://localhost:4000` in your browser.
