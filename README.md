@@ -51,6 +51,27 @@ Then write your content in Markdown below the front matter.
 - `blog.md` - Blog listing page
 - `about.md` - About page
 
+## CI/CD
+
+This repository uses GitHub Actions for continuous integration and deployment:
+
+### CI Workflow (`ci.yml`)
+- **Triggers**: Pull requests and pushes to `main` branch
+- **Actions**:
+  - Builds the Jekyll site
+  - Validates HTML structure
+  - Checks for broken internal links
+  - Uploads build artifacts for inspection
+
+### Deployment Workflow (`pages.yml`)
+- **Triggers**: Pushes to `main` branch
+- **Actions**:
+  - Builds the Jekyll site for production
+  - Deploys to GitHub Pages
+  - Runs with proper concurrency controls
+
+All workflows ensure that code changes are properly tested before being merged or deployed.
+
 ## License
 
 Content and design © 2025 Reedz
