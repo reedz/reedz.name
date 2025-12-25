@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      
+      - name: Install dependencies
+        run: bundle install
+      
+      - name: Build Jekyll site
+        run: bundle exec jekyll build
+        env:
+          JEKYLL_ENV: production
+      
+      - name: Test site build
+        run: |
+          if [ ! -d "_site" ]; then
+            echo "Error: _site directory not created"
+            exit 1
+          fi
+          if [ ! -f "_site/index.html" ]; then
+            echo "Error: index.html not found in _site"
+            exit 1
+          fi
+          echo "Build successful: _site directory contains expected files"
+      
+      - name: Check for broken internal links
+        run: |
+          echo "Checking for broken internal links..."
+          # Simple check for common issues in generated HTML
+          find _site -name "*.html" -type f -exec grep -l "href=\"\"" {} \; > broken_links.txt || true
+          if [ -s broken_links.txt ]; then
+            echo "Warning: Found empty href attributes in:"
+            cat broken_links.txt
+            # Don't fail on this, just warn
+          else
+            echo "No empty href attributes found"
+          fi
+      
+      - name: Validate HTML structure
+        run: |
+          echo "Validating HTML structure..."
+          # Check that all HTML files have basic structure
+          for file in $(find _site -name "*.html" -type f); do
+            if ! grep -q "<html" "$file"; then
+              echo "Error: $file missing <html> tag"
+              exit 1
+            fi
+            if ! grep -q "</html>" "$file"; then
+              echo "Error: $file missing </html> tag"
+              exit 1
+            fi
+          done
+          echo "HTML structure validation passed"
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: site-build
+          path: _site/
+          retention-days: 7
