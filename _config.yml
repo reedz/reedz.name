@@ -1,0 +1,39 @@
+# Site settings
+title: Reedz
+description: Software Engineer
+url: "https://reedz.name"
+baseurl: ""
+
+# Author info
+author:
+  name: Reedz
+  email: reedz@reedz.name
+
+# Build settings
+markdown: kramdown
+permalink: /blog/:year/:month/:day/:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /blog/:year/:month/:day/:title/
+
+# Exclude files
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
